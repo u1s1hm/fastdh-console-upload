@@ -39,6 +39,12 @@ class Preflight(unittest.TestCase):
     def test_zero_rules(self):
         self.assertEqual(m.validate_tables(table(m.RULE,[])+'\n\n'+table(m.STEP,[]),set())[1],[])
 
+    def test_explicit_no_expiry_distinct_from_missing(self):
+        r,s=sample(); r[m.RULE.index('Expiry seconds')]='EMPTY'
+        self.assertEqual(m.validate_tables(table(m.RULE,[r])+'\n\n'+table(m.STEP,[s]),{'test_base'})[1],[])
+        r[m.RULE.index('Expiry seconds')]=''
+        self.assertTrue(m.validate_tables(table(m.RULE,[r])+'\n\n'+table(m.STEP,[s]),{'test_base'})[1])
+
     def test_bad_steps(self):
         for field, value in [('Rule ID','R99'),('Switch trigger','Before this speech'),
                              ('Template category','missing'),('Step','2')]:

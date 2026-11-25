@@ -73,6 +73,8 @@ def validate_tables(text, categories):
             errors.append(f'{rid}: requires 1-8 contiguous ordered steps')
         for field, lower, upper in [('Cooldown seconds', 0, 86400), ('Expiry seconds', 1, 86400)]:
             value = rule[field]
+            if field == 'Expiry seconds' and value == 'EMPTY':
+                continue  # Current UI: no event expiry. Missing cell is still invalid.
             if not value.isdigit() or not lower <= int(value) <= upper:
                 errors.append(f'{rid}: {field} needs a supported value or manual review')
     for step in steps:
@@ -119,6 +121,7 @@ def check(root):
     return {'status': 'REVIEW' if errors else 'OK', 'errors': errors,
             'rules': len(tables.get('rules', [])), 'steps': len(tables.get('steps', [])),
             'template_categories': sorted(categories), 'sha256': fingerprints,
+            'script_nonempty_lines': sum(bool(line.strip()) for line in texts.get('LiveScript.md', '').splitlines()),
             'scope': 'Structure only; no semantic, bilingual, script-range or platform verification.'}
 
 

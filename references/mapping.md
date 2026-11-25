@@ -9,8 +9,8 @@
 | 媒体映射内场景值 | Scenario 名称、Category Live、Status、专属指令、记忆/知识 | 不把整个映射表粘入指令 |
 | video_template_*.md | Knowledge library/domain → Upload → 处理成功 | 数量、文档预览、类别与实际媒体别名 |
 | LiveScript.md | Live configuration → LiveScript.md | 保存后回读原文，重新计算非空行 |
-| LiveScript_Nonempty_Line_Index.md | Programme orchestration 逐元素配置 | 顺序、脚本来源/范围、底板、结束条件 |
-| 媒体映射内 W 配置 | Queued performances 对应节目元素 | 持续时间、配额、计时和评论开关 |
+| LiveScript_Nonempty_Line_Index.md | Programme orchestration / 场景 JSON | 按顺序完整映射所有元素，来源/范围/底板/结束条件 |
+| 媒体映射内 W 配置 | 本场指定的互动窗口元素类型 | 有点播才用对应 Queued performances；纯评论窗口可按明确包配置使用 Live section，不由 W 前缀推断类型 |
 | 媒体映射内评论策略 | Audience comment selection | 与节目窗口和规则分别保存 |
 | 媒体映射逐规则表＋逐动作表 | Rules of interaction | Rule ID→实际规则映射，顺序与每一步 |
 | 中文译本 | 本地核对 | 默认不上传，不当英语稿的行号来源 |
@@ -28,7 +28,7 @@ Rule ID 作为本地稳定引用，不虚构后台 ID。字段固定于 v0.3.1 �
 
 模板选择仅用于 Speak text、Generate reply、Switch template：Keep current template / Fixed category / LLM-assisted selection。固定类别用本场真实类别；切换必需性逐场设。Switch trigger 的 Before/After this speech 仅用于播报附加模板，独立 Switch template 不填。切模板不是播放指定原视频；固定离线节目当前实现若不明确，要核实新版 performance/Brain 路径，不强行使用旧 video 元素。
 
-Timing：After current speech / Immediately；完成：Resume previous content / Stay active / Finish；失败：Abort remaining steps / Continue optional steps。冷却 0–86400 秒，Per session/Per viewer，后者需稳定观众 ID。规则过期手册证实范围 1–86400，空值语义待核；不同于选评队列明确支持留空不过期。
+Timing：After current speech / Immediately；完成：Resume previous content / Stay active / Finish；失败：Abort remaining steps / Continue optional steps。冷却 0–86400 秒，Per session/Per viewer，后者需稳定观众 ID。规则 Expiry seconds 指事件过期时间，不是规则的生效期限；手册证实数值范围 1–86400。2026-11-25 当前 UI 和 JSON 回读确认空白/null 表示禁用事件过期：包内明确 EMPTY 可映射为 null，更新缺失字段仍保留。其它版本重新核对；此结论不证明排队事件的实播行为。
 
 ## 未覆盖字段与默认
 

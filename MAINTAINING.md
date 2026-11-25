@@ -5,9 +5,11 @@
 - SKILL.md：入口、授权范围、流程与完成条件。
 - references/login.md：固定域名、个人卡密登录和会话恢复。
 - references/mapping.md：生成包与后台字段对应，适用性和兼容基线。
-- references/workflow.md：UI 操作、保存、冲突和部分成功恢复。
+- references/transport.md：宿主/通道选择、上传预检与有日期的能力证据。
+- references/batch.md：临时批量载体、基线/差异合并和本地工具约定。
+- references/workflow.md：依赖顺序、批量/表单保存、冲突和部分成功恢复。
 - references/verification.md：回读、预览、实播的证据边界。
-- scripts/preflight.py、tests/：只读检查与脱敏合成用例。
+- scripts/preflight.py、scripts/batch_config.py、tests/：只读预检、离线合并/比较/恢复决策与脱敏合成用例。
 - README.md：面向团队的安装/使用说明；CHANGELOG.md：面向用户的中文变更与迁移影响。
 
 仅 UI、弹窗或保存流程变化，更新上传技能；配置语义或生成包约定变化，同时检查 fastdh-live-package 受影响部分。不要复制整份内部手册到公共仓库。事实变更记录来源类型、核对日期和适用范围；静态检查不得写成生产验收。
@@ -21,7 +23,7 @@ PYTHONDONTWRITEBYTECODE=1 python -m unittest discover -s tests -v
 git diff --check
 ```
 
-有 Codex skill-creator 时再运行其 quick_validate.py。引用文件、安装路径、版本号和 Markdown 链接需检查；新增功能应补能观察到行为的用例。当前发行版提供本地测试，未配置 GitHub Actions。未来启用 CI 需维护者单独配置相应仓库权限，测试不应连接 FastDH 或使用生产卡密。
+有 Codex skill-creator 时再运行其 quick_validate.py。引用文件、安装路径、版本号和 Markdown 链接需检查；新增功能应补能观察到行为的用例。本版运行本地合成测试，未配置 GitHub Actions；测试不连接 FastDH，不使用卡密或生产会话。未来启用 CI 需维护者配置相应仓库权限。
 
 需要做生产回归时单独取得目标与操作范围授权，使用本人的会话；记录已验证与未验证项，材料留在授权工作区，不发布。实播授权与配置上传授权分开。
 
