@@ -51,8 +51,9 @@ def parse_tables(text):
 
 def validate_tables(text, categories):
     tables, errors = parse_tables(text)
+    pending = []
     if errors:
-        return tables, errors
+        return tables, errors, pending
     rules, steps = tables['rules'], tables['steps']
     ids = [r['Rule ID'] for r in rules]
     if len(ids) != len(set(ids)):
@@ -60,8 +61,10 @@ def validate_tables(text, categories):
     if [r['Order'] for r in rules] != [str(i+1) for i in range(len(rules))]:
         errors.append('rule order must follow table order, starting at 1')
     for row in rules + steps:
-        if any(v.upper().startswith('PENDING') for v in row.values()):
-            errors.append(f"{row['Rule ID']}: pending field requires resolution")
+        for field, value in row.items():
+            if value.upper().startswith('PENDING'):
+                pending.append({'rule_id': row['Rule ID'], 'step': row.get('Step'),
+                                'field': field, 'value': value})
     for rule in rules:
         rid = rule['Rule ID']
         if rule['Event'] == 'Comments' and rule['Enabled'] != 'true':
@@ -81,13 +84,16 @@ def validate_tables(text, categories):
         rid = step['Rule ID']
         if rid not in ids:
             errors.append(f'{rid}: orphan step')
-        if step['Template mode'] == 'Fixed category' and step['Template category'] not in categories:
+        category = step['Template category']
+        if category.upper().startswith('PENDING:'):
+            category = category.partition(':')[2].strip()
+        if step['Template mode'] == 'Fixed category' and category not in categories:
             errors.append(f'{rid}: fixed template category not in package')
         if step['Action'] == 'Switch template' and step['Switch trigger'] != 'N/A':
             errors.append(f'{rid}: standalone switch has no speech trigger')
         if step['Action'] == 'Generate reply' and any(step[f] in ('EMPTY', 'N/A') for f in ('Text or prompt', 'Spoken language')):
             errors.append(f'{rid}: reply needs instruction and spoken language')
-    return tables, errors
+    return tables, errors, pending
 
 
 def check(root):
@@ -116,9 +122,9 @@ def check(root):
             categories.add(match[1])
         fingerprints[p.name] = hashlib.sha256(raw).hexdigest()
     text = texts.get('Media_Resources_and_Pending_Checks.md', '')
-    tables, issues = validate_tables(text, categories)
+    tables, issues, pending = validate_tables(text, categories)
     errors.extend(issues)
-    return {'status': 'REVIEW' if errors else 'OK', 'errors': errors,
+    return {'status': 'REVIEW' if errors or pending else 'OK', 'errors': errors, 'pending': pending,
             'rules': len(tables.get('rules', [])), 'steps': len(tables.get('steps', [])),
             'template_categories': sorted(categories), 'sha256': fingerprints,
             'script_nonempty_lines': sum(bool(line.strip()) for line in texts.get('LiveScript.md', '').splitlines()),

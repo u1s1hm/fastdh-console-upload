@@ -55,6 +55,16 @@ class Preflight(unittest.TestCase):
     def test_missing_tables_legacy_review(self):
         self.assertTrue(m.validate_tables('Existing narrative only',set())[1])
 
+    def test_pending_category_distinct_from_invalid_category(self):
+        rule, step = sample()
+        step[m.STEP.index('Template category')] = 'PENDING: test_base'
+        text = table(m.RULE, [rule]) + '\n\n' + table(m.STEP, [step])
+        _, errors, pending = m.validate_tables(text, {'test_base'})
+        self.assertEqual(errors, [])
+        self.assertEqual(pending, [{'rule_id': 'R01', 'step': '1',
+                                    'field': 'Template category', 'value': 'PENDING: test_base'}])
+        self.assertTrue(m.validate_tables(text, {'other_base'})[1])
+
     def test_pending_disabled_and_missing(self):
         for field,value in [('Expiry seconds','PENDING: empty semantics'),('Enabled','false'),('Timing','')]:
             r,s=sample(); r[m.RULE.index(field)]=value

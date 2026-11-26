@@ -2,7 +2,7 @@
 
 [发行版与安装包](https://github.com/u1s1hm/fastdh-console-upload/releases) · [更新日志](CHANGELOG.md) · [维护约定](MAINTAINING.md) · [技能入口](SKILL.md)
 
-与 fastdh-live-package v0.3.1 配套：生成技能负责内容包；本技能负责将包应用到 FastDH 控制台。版本 0.2.0。
+与 fastdh-live-package v0.3.1 配套：生成技能负责内容包；本技能负责将包应用到 FastDH 控制台。版本 0.2.1。
 
 本版优先使用宿主内置浏览器，先检查文件上传能力，再通过已验证的批量入口准备、提交和回读配置。正常路径不再逐项点击创建编排；局部更新保留其它字段，中断后先查已保存结果再续传。原始包默认只读。
 
@@ -12,15 +12,17 @@
 
 ```text
 请使用 skill-installer 安装 https://github.com/u1s1hm/fastdh-console-upload。
-仓库根目录是技能目录，名称 fastdh-console-upload，固定到 v0.2.0。
+仓库根目录是技能目录，名称 fastdh-console-upload，固定到 v0.2.1。
 若已安装，请先检查本地修改，再更新。
 ```
 
-手动安装请从 [v0.2.0 Release](https://github.com/u1s1hm/fastdh-console-upload/releases/tag/v0.2.0) 下载 `fastdh-console-upload-v0.2.0.zip`，可用同页 `SHA256SUMS.txt` 核验完整性。GitHub 自动生成的 Source code 压缩包也可用，但需将顶层文件夹改名为 `fastdh-console-upload`。
+手动安装请从 [v0.2.1 Release](https://github.com/u1s1hm/fastdh-console-upload/releases/tag/v0.2.1) 下载 `fastdh-console-upload-v0.2.1.zip`，可用同页 `SHA256SUMS.txt` 核验完整性。GitHub 自动生成的 Source code 压缩包也可用，但需将顶层文件夹改名为 `fastdh-console-upload`。
 
 将压缩包解压，把整个 `fastdh-console-upload` 文件夹放进 Codex 的 `$CODEX_HOME/skills`（未设置时为 `~/.codex/skills`）。确保 SKILL.md 直接在该文件夹下。无需复制原作者的工作目录或桌面手册；不含共享账号和卡密。其它支持 SKILL.md 的 Agent 可放其技能目录，仍需该宿主可用的浏览器工具和文件上传能力。
 
 需要 Python 3（本地工具使用标准库，无 pip 依赖）、可读本地文件的 Agent，以及浏览器自动化/文件上传工具。Codex 内置浏览器已在本次案例完成模板上传，无需为此额外安装扩展。其它宿主先检测能力，只有缺少必要能力才引导连接外部浏览器；不会自装 CLI 或修改系统设置。它是由 Agent 执行的自动化技能，不是脱离 Agent 单独运行的一键软件。
+
+安装后在 Codex 实际执行命令的环境中运行 `python -c "import sys; print(sys.executable); print(sys.version)"`。Windows 若遇到商店占位符，试 `py -3 -c "import sys; print(sys.executable); print(sys.version)"`。两者均不可用且宿主未提供 Python 3 时，先安装可用的 Python 3。首次用测试场景验证配置包预检、上传完成和重新打开后的保存回读，再用于正式场景。
 
 ## 使用
 
